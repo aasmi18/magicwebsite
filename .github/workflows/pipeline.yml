@@ -1,5 +1,5 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+# Simple workflow for running a Node.js test case and deploying static content to GitHub Pages
+name: Run test case and deploy static content to Pages
 
 on:
   # Runs on pushes targeting the default branch
@@ -34,14 +34,47 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
   Automation-Testing:
     needs: sonarcloud
     runs-on: ubuntu-latest  # Runs on Ubuntu environment
+    
+    # Steps to execute within the job
     steps:
       # Step to checkout the repository code
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      # Step to set up Python environment
-      - name: Set up Python
+      # Step to install Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"  # Version of Node.js to set up
+
+      # Step to install dependencies
+      - name: Install dependencies
+        run: npm install puppeteer@latest
+
+      # Step to execute test case
+      - name: Run test case
+        run: node testcase.js
+
+  # Single deploy job since we're just deploying
+  deploy:
+    needs: Automation-Testing
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Upload entire repository
+          path: '.'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
