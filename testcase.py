@@ -4,20 +4,15 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-# URL of your webpage
-URL = 'https://scifigurmeet.github.io/magicwebsite/'
-
-# Initialize Chrome WebDriver
-service = Service(
-    executable_path='C:/Users/scifi/OneDrive/Desktop/chromedriver.exe')
+# Start the WebDriver and open the HTML page
+service = Service(executable_path='/usr/local/bin/chromedriver')
 options = webdriver.ChromeOptions()
 options.add_argument("--headless")
 options.add_argument('--no-sandbox')
 driver = webdriver.Chrome(service=service, options=options)
+
+# URL of your webpage
+URL = 'https://scifigurmeet.github.io/magicwebsite/'
 
 try:
     # Open the webpage
@@ -34,6 +29,7 @@ try:
 except Exception as e:
     # If the element is not found, print failure message
     print("Test Failed:", e)
+    raise e
 finally:
     # Close the WebDriver
     driver.quit()
