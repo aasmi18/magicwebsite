@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   # Single deploy job since we're just deploying
- Automation-Testing:
+  Automation-Testing:
     runs-on: ubuntu-latest  # Runs on Ubuntu environment
 
     # Steps to execute within the job
@@ -67,7 +67,7 @@ jobs:
       #     git push
 
   deploy:
-   needs: automation-testing
+    needs: automation-testing
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
